@@ -1,6 +1,11 @@
 <?php
+/**
+ * @author Sandip Mandal
+ * @link   https://mrsandipmandal.github.io
+ * @repo   https://github.com/mrsandipmandal/google-drive-uploader.git
+ */
 
-namespace SandipMandal\GoogleDrive;
+namespace Open\GoogleDrive;
 
 use Google\Client;
 use Google\Service\Drive;

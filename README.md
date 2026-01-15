@@ -45,7 +45,7 @@ composer update
 
 ### Initialization
 ```php
-use SandipMandal\GoogleDrive\GoogleDriveService;
+use Open\GoogleDrive\GoogleDriveService;
 
 $drive = new GoogleDriveService('path/to/credentials.json', 'path/to/token.json');
 ```
@@ -60,6 +60,50 @@ echo "File URL: " . $file->getWebViewLink();
 ```php
 $url = $drive->getAuthUrl('http://localhost/callback.php');
 header("Location: $url");
+```
+
+## Laravel Integration
+
+Since this package is local, the best way to use it in Laravel is:
+
+1.  **Create a folder** in your Laravel root called `packages/sandipmandal`.
+2.  **Copy** the `google-drive-uploader` folder into `packages/sandipmandal/`.
+3.  **Edit** `composer.json` in your Laravel project:
+
+```json
+"repositories": [
+    {
+        "type": "path",
+        "url": "./packages/sandipmandal/google-drive-uploader"
+    }
+],
+"require": {
+    "sandipmandal/google-drive-uploader": "@dev"
+}
+```
+
+4.  Run `composer update`.
+
+### usage in a Controller
+```php
+use Open\GoogleDrive\GoogleDriveService;
+
+class DriveController extends Controller
+{
+    public function upload(Request $request)
+    {
+        $drive = new GoogleDriveService(
+            storage_path('app/google-drive/credentials.json'), 
+            storage_path('app/google-drive/token.json')
+        );
+
+        $file = $drive->uploadFile($request->file('image')->getPathname(), 'MyUploads');
+        
+        return response()->json([
+            'url' => $file->getWebViewLink()
+        ]);
+    }
+}
 ```
 
 ## License
