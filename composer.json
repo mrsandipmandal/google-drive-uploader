@@ -1,0 +1,22 @@
+{
+    "name": "sandipmandal/google-drive-uploader",
+    "description": "A simple, robust PHP library for uploading files to Google Drive with auto-retry and persistent auth.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sandip Mandal",
+            "email": "sandip@example.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "google/apiclient": "^2.15"
+    },
+    "autoload": {
+        "psr-4": {
+            "SandipMandal\\GoogleDrive\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
