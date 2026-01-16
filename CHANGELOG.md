@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.5] - 2026-01-16
+
+### Fixed
+- **Token Handling**: Fixed `InvalidArgumentException` when `token.json` exists but is empty or contains invalid JSON. Now it gracefully ignores corrupt tokens, allowing standard re-authentication flow.
+- **Directory Creation**: Added `saveToken` helper to automatically create the directory for `token.json` if it doesn't exist during authentication or token refresh. This prevents errors when the specified storage path directory is missing.
+
 ## [1.0.4] - 2026-01-16
 
 ### Fixed

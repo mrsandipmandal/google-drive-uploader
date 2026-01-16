@@ -86,9 +86,21 @@ class GoogleDriveService
             throw new Exception("Error fetching access token: " . ($token['error_description'] ?? $token['error']));
         }
 
-        file_put_contents($this->tokenPath, json_encode($token));
+        $this->saveToken($token);
         $this->client->setAccessToken($token);
         return $token;
+    }
+
+    /**
+     * Save token to file, creating directory if needed.
+     */
+    private function saveToken(array $token): void
+    {
+        $dir = dirname($this->tokenPath);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        file_put_contents($this->tokenPath, json_encode($token));
     }
 
     /**
@@ -97,6 +109,7 @@ class GoogleDriveService
      * @param string $filePath Local path to the file
      * @param string $folderName Name of the folder to upload to (created if not exists)
      * @param bool $makePublic Whether to make the file public
+     * @param string|null $fileName Custom file name (optional, defaults to basename of path)
      * @return Drive\DriveFile The uploaded file object
      */
     /**
@@ -292,7 +305,20 @@ class GoogleDriveService
              return; 
         }
 
-        $token = json_decode(file_get_contents($this->tokenPath), true);
+        $content = file_get_contents($this->tokenPath);
+        $token = json_decode($content, true);
+
+        // Check if token file is empty or invalid JSON
+        if (!$token || !is_array($token)) {
+             // If invalid, we cannot refresh. Just return and let the caller handle the "auth required" state.
+             // Ideally we should warn, but in a library, silence or exception is better.
+             // Here we treat it as "not logged in".
+             if (php_sapi_name() === 'cli') {
+                 echo "Warning: Token file empty or invalid at {$this->tokenPath}\n";
+             }
+             return;
+        }
+
         $this->client->setAccessToken($token);
 
         if ($force || $this->client->isAccessTokenExpired()) {
@@ -316,7 +342,7 @@ class GoogleDriveService
                 }
 
                 $merged = array_merge($token, $newToken);
-                file_put_contents($this->tokenPath, json_encode($merged));
+                $this->saveToken($merged);
                 $this->client->setAccessToken($merged);
             }
         }
