@@ -2,20 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.12] - 2026-01-16
+## [1.0.10] - 2026-01-16
 
 ### Added
 - **Thumbnail Helper**: Added `getThumbnailLink($fileId, $width)` method. This provides an alternative way to load images (via `drive.google.com/thumbnail`) which is often less restrictive than the full-size download link.
-
-## [1.0.11] - 2026-01-16
 
 ### Changed
 - **Embed Link**: Reverted `getEmbedLink` to the standard `drive.google.com/uc?export=view&id=...` format. This handles redirects to the correct content server better than direct CDN links in some regions.
 
 ### Fixed
 - **API Response**: Fixed `uploadFiles` (bulk upload) to correctly request `mimeType` in the response fields.
-
-## [1.0.10] - 2026-01-16
 
 ### Changed
 - **Image Reliability**: Updated `getEmbedLink` to use the `drive.google.com/thumbnail?sz=s2000&id=...` endpoint. This is the official and most reliable way to serve high-resolution (up to 2000px) direct images from Drive without 403 errors.

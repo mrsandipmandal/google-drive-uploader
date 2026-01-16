@@ -1,6 +1,6 @@
 {
     "name": "sandipmandal/google-drive-uploader",
-    "description": "A robust, self-healing PHP library for seamless file uploads to Google Drive. Features automatic token refreshing (handling 7-day expiry issues), smart folder management, and retries on 401 errors.",
+    "description": "A robust, self-healing Google Drive Uploader for PHP. Features automatic token lifecycle management, smart folder handling, and reliable helpers for embedding images and videos.",
     "type": "library",
     "license": "MIT",
     "homepage": "https://github.com/mrsandipmandal/google-drive-uploader",
