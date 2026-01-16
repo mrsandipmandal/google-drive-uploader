@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.3] - 2026-01-16
+
+### Added
+- **Direct Image Embedding**: Added `getEmbedLink($fileId)` method to generate ready-to-use `<img src="...">` links.
+- **Bulk Uploads**: Added `uploadFiles(array $paths, $folder)` method for optimized multiple file uploads (cached folder lookup).
+- **Documentation Overhaul**: Complete rewrite of `README.md` for Packagist release, removing legacy references and adding clear Laravel integration guides.
+- **Examples**: Added comprehensive examples for multiple file uploads and Laravel usage.
+
+### Fixed
+- **Documentation**: Removed incorrect "Zoho Mail" references copy-pasted from generic templates.
+- **Git**: Added `.gitignore` to properly exclude sensitive credentials and vendor files.
+
+## [1.0.2] - 2026-01-16
+
+### Changed
+- MIT License: Updated for better Packagist discoverability.
+
 ## [1.0.1] - 2026-01-15
 
 ### Changed

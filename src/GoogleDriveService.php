@@ -132,6 +132,57 @@ class GoogleDriveService
     }
 
     /**
+     * Upload multiple files to a specific folder efficiently.
+     * This optimizes by only checking/creating the folder once.
+     * 
+     * @param array $filePaths Array of local file paths
+     * @param string $folderName Name of the folder to upload to
+     * @param bool $makePublic Whether to make files public
+     * @return array Array of uploaded file objects (keys are original paths)
+     */
+    public function uploadFiles(array $filePaths, string $folderName, bool $makePublic = true): array
+    {
+        return $this->callWithRetry(function () use ($filePaths, $folderName, $makePublic) {
+            $service = $this->getService();
+            
+            // Optimization: Get folder ID once for all files
+            $folderId = $this->getOrCreateFolder($folderName);
+            
+            $results = [];
+
+            foreach ($filePaths as $filePath) {
+                if (!file_exists($filePath)) {
+                    continue;
+                }
+
+                $fileMetadata = new Drive\DriveFile([
+                    'name' => basename($filePath),
+                    'parents' => [$folderId]
+                ]);
+
+                $content = file_get_contents($filePath);
+                $mimeType = mime_content_type($filePath);
+
+                $file = $service->files->create($fileMetadata, [
+                    'data' => $content,
+                    'mimeType' => $mimeType,
+                    'uploadType' => 'multipart',
+                    'supportsAllDrives' => true,
+                    'fields' => 'id, name, parents, webViewLink, webContentLink, thumbnailLink'
+                ]);
+
+                if ($makePublic) {
+                    $this->setPublicPermissions($file->getId());
+                }
+
+                $results[$filePath] = $file;
+            }
+
+            return $results;
+        });
+    }
+
+    /**
      * Find or create a folder by name.
      */
     public function getOrCreateFolder(string $folderName, ?string $parentId = null): string

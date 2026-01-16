@@ -87,6 +87,20 @@ try {
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
 }
+
+```
+
+### 4. Uploading Multiple Files
+
+To upload efficiently (checking folder existence only once):
+
+```php
+$files = ['/path/to/img1.jpg', '/path/to/img2.png'];
+$uploadedFiles = $drive->uploadFiles($files, 'My Holiday');
+
+foreach ($uploadedFiles as $path => $file) {
+    echo "Uploaded $path -> ID: " . $file->id . "\n";
+}
 ```
 
 ## Laravel Integration
@@ -123,6 +137,30 @@ class DriveController extends Controller
             'url' => $googleFile->getWebViewLink(),
             'embed_link' => $drive->getEmbedLink($googleFile->id)
         ]);
+    }
+
+    public function uploadMultiple(Request $request)
+    {
+        $request->validate(['files.*' => 'required|file']);
+
+        $drive = new GoogleDriveService(
+            storage_path('app/google/credentials.json'),
+            storage_path('app/google/token.json')
+        );
+
+        $paths = [];
+        foreach ($request->file('files') as $file) {
+            $paths[] = $file->getPathname();
+        }
+
+        $uploadedFiles = $drive->uploadFiles($paths, 'LaravelBatchUploads');
+        
+        $links = [];
+        foreach ($uploadedFiles as $file) {
+            $links[] = $drive->getEmbedLink($file->id);
+        }
+
+        return response()->json(['links' => $links]);
     }
 }
 ```
