@@ -106,9 +106,6 @@ foreach ($uploadedFiles as $path => $file) {
 ## Laravel Integration
 
 This package is framework-agnostic, but can be easily used in Laravel.
-
-## Laravel Integration
-
 This package handles the entire OAuth flow. Here is a complete production-ready implementation.
 
 ### 1. Define Routes
