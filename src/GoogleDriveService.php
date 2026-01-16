@@ -48,6 +48,11 @@ class GoogleDriveService
         }
 
         $this->refreshAccessToken(); // Ensure valid token before creating service
+        
+        if (!$this->client->getAccessToken()) {
+            throw new Exception("Google Drive Auth Required: Token file missing or invalid. Please authenticate.");
+        }
+
         $this->service = new Drive($this->client);
         return $this->service;
     }
@@ -297,11 +302,7 @@ class GoogleDriveService
     private function refreshAccessToken(bool $force = false): void
     {
         if (!file_exists($this->tokenPath)) {
-            // No token file; caller should handle auth flow (usually checks before calling this)
-            // But if we are here mostly likely we expect it to exist.
-             if (php_sapi_name() === 'cli') {
-                 echo "Error: Token file not found at {$this->tokenPath}\n";
-             }
+            // No token file. Caller must handle auth flow.
              return; 
         }
 
@@ -310,12 +311,7 @@ class GoogleDriveService
 
         // Check if token file is empty or invalid JSON
         if (!$token || !is_array($token)) {
-             // If invalid, we cannot refresh. Just return and let the caller handle the "auth required" state.
-             // Ideally we should warn, but in a library, silence or exception is better.
-             // Here we treat it as "not logged in".
-             if (php_sapi_name() === 'cli') {
-                 echo "Warning: Token file empty or invalid at {$this->tokenPath}\n";
-             }
+             // Invalid token file. Treat as not logged in.
              return;
         }
 

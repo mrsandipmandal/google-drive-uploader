@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.7] - 2026-01-16
+
+### Fixed
+- **Auth Flow**: Updated `getService` to strictly check for an access token before proceeding. If no token is found (missing or invalid `token.json`), it now throws a clear `Exception` ("Google Drive Auth Required") instead of letting the API call fail with a confusing 403 Forbidden error.
+- **Cleanup**: Removed CLI echo messages from `refreshAccessToken` to prevent output pollution in web apps.
+
 ## [1.0.5] - 2026-01-16
 
 ### Fixed
