@@ -186,6 +186,18 @@ class GoogleDriveService
     }
 
     /**
+     * Get a direct embeddable link (e.g., for <img src>).
+     * Note: This link format is widely used for hosting images from Drive.
+     *
+     * @param string $fileId
+     * @return string
+     */
+    public function getEmbedLink(string $fileId): string
+    {
+        return "https://drive.google.com/uc?export=view&id=" . $fileId;
+    }
+
+    /**
      * Execute a callback with retry logic for 401 errors.
      */
     private function callWithRetry(callable $callback)

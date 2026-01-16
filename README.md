@@ -79,7 +79,10 @@ try {
     // The current implementation returns a Google_Service_Drive_DriveFile object
     
     echo "File Uploaded! ID: " . $fileId->id . "\n";
-    echo "Web View Link: " . $fileId->getWebViewLink();
+    echo "Web View Link: " . $fileId->getWebViewLink() . "\n";
+    
+    // For images (<img src="...">), use the embed link:
+    echo "Embed Link: " . $drive->getEmbedLink($fileId->id);
     
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
@@ -117,7 +120,8 @@ class DriveController extends Controller
         
         return response()->json([
             'message' => 'Upload successful',
-            'url' => $googleFile->getWebViewLink()
+            'url' => $googleFile->getWebViewLink(),
+            'embed_link' => $drive->getEmbedLink($googleFile->id)
         ]);
     }
 }
