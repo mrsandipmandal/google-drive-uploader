@@ -122,7 +122,17 @@ Route::post('/upload', [DriveController::class, 'upload'])->name('google.upload'
 Route::get('/google/callback', [DriveController::class, 'callback'])->name('google.callback');
 ```
 
-**Note:** Ensure `http://localhost:8000/google/callback` (or your domain) is added to "Authorized redirect URIs" in your Google Cloud Console.
+> [!IMPORTANT] 
+> **Google Cloud Console Setup**
+> You MUST add the full callback URL to your **Authorized redirect URIs** in the Google Cloud Console.
+>
+> If your app runs at `http://localhost:8000`, add:
+> `http://localhost:8000/google/callback`
+>
+> If your app runs at `http://localhost/myapp/public`, add:
+> `http://localhost/myapp/public/google/callback`
+>
+> **The URL must match EXACTLY what your Laravel app generates.**
 
 ### 2. The Controller
 
@@ -166,9 +176,10 @@ class DriveController extends Controller
             ]);
 
         } catch (Exception $e) {
-            // detailed check for "Auth Required" message from library
+            // Check for "Auth Required" message from library
             if (str_contains($e->getMessage(), 'Google Drive Auth Required')) {
-                // Redirect user to Google Login
+                // Generate Login URL with the callback route
+                // IMPORTANT: This route() must match the URI in Google Console
                 $authUrl = $this->getDriveService()->getAuthUrl(route('google.callback'));
                 return redirect($authUrl);
             }
@@ -185,10 +196,10 @@ class DriveController extends Controller
 
         $drive = $this->getDriveService();
         
-        // This exchanges the code for a token and SAVES it to token.json automatically
+        // Exchange code for token and save it automatically
         $drive->authenticate($code, route('google.callback'));
 
-        return redirect()->route('google.upload'); // Or wherever you want
+        return "Token saved! You can now try uploading again.";
     }
 }
 ```
