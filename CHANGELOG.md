@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2026-01-16
+
+### Fixed
+- **Filename Handling**: Updated `uploadFile` and `uploadFiles` to accept optional custom filenames. This fixes the issue where uploading temporary files (e.g. from Laravel) resulted in names like `php1234.tmp` in Google Drive.
+
 ## [1.0.3] - 2026-01-16
 
 ### Added

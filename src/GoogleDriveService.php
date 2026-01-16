@@ -99,16 +99,25 @@ class GoogleDriveService
      * @param bool $makePublic Whether to make the file public
      * @return Drive\DriveFile The uploaded file object
      */
-    public function uploadFile(string $filePath, string $folderName, bool $makePublic = true): Drive\DriveFile
+    /**
+     * Upload a file to a specific folder.
+     * 
+     * @param string $filePath Local path to the file
+     * @param string $folderName Name of the folder to upload to (created if not exists)
+     * @param bool $makePublic Whether to make the file public
+     * @param string|null $fileName Custom file name (optional, defaults to basename of path)
+     * @return Drive\DriveFile The uploaded file object
+     */
+    public function uploadFile(string $filePath, string $folderName, bool $makePublic = true, ?string $fileName = null): Drive\DriveFile
     {
-        return $this->callWithRetry(function () use ($filePath, $folderName, $makePublic) {
+        return $this->callWithRetry(function () use ($filePath, $folderName, $makePublic, $fileName) {
             $service = $this->getService();
             
             // Get or create parent folder
             $folderId = $this->getOrCreateFolder($folderName);
 
             $fileMetadata = new Drive\DriveFile([
-                'name' => basename($filePath),
+                'name' => $fileName ?? basename($filePath),
                 'parents' => [$folderId]
             ]);
 
@@ -150,13 +159,17 @@ class GoogleDriveService
             
             $results = [];
 
-            foreach ($filePaths as $filePath) {
+            foreach ($filePaths as $key => $value) {
+                // Support ['filename.jpg' => '/path/to/tmp'] or ['/path/to/file']
+                $filePath = $value;
+                $fileName = is_string($key) ? $key : basename($filePath);
+
                 if (!file_exists($filePath)) {
                     continue;
                 }
 
                 $fileMetadata = new Drive\DriveFile([
-                    'name' => basename($filePath),
+                    'name' => $fileName,
                     'parents' => [$folderId]
                 ]);
 
@@ -175,7 +188,7 @@ class GoogleDriveService
                     $this->setPublicPermissions($file->getId());
                 }
 
-                $results[$filePath] = $file;
+                $results[$fileName] = $file;
             }
 
             return $results;

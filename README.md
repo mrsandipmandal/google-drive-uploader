@@ -129,7 +129,9 @@ class DriveController extends Controller
         $uploadedFile = $request->file('file');
         $googleFile = $drive->uploadFile(
             $uploadedFile->getPathname(), 
-            'LaravelUploads'
+            'LaravelUploads',
+            true, // Make public
+            $uploadedFile->getClientOriginalName() // Use original name instead of temp name
         );
         
         return response()->json([
@@ -150,7 +152,8 @@ class DriveController extends Controller
 
         $paths = [];
         foreach ($request->file('files') as $file) {
-            $paths[] = $file->getPathname();
+            // Use filename as key to preserve it (['name.jpg' => '/tmp/path'])
+            $paths[$file->getClientOriginalName()] = $file->getPathname();
         }
 
         $uploadedFiles = $drive->uploadFiles($paths, 'LaravelBatchUploads');
