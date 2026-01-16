@@ -269,14 +269,14 @@ class GoogleDriveService
 
     /**
      * Get a direct embeddable link (e.g., for <img src>).
-     * Uses the reliable Google Host (lh3) for images.
+     * Note: If this fails, ensure the file is 'Public'.
      *
      * @param string $fileId
      * @return string
      */
     public function getEmbedLink(string $fileId): string
     {
-        return "https://lh3.googleusercontent.com/d/" . $fileId;
+        return "https://drive.google.com/uc?export=view&id=" . $fileId;
     }
 
     /**
@@ -289,6 +289,18 @@ class GoogleDriveService
     public function getPreviewLink(string $fileId): string
     {
         return "https://drive.google.com/file/d/" . $fileId . "/preview";
+    }
+
+    /**
+     * Get a thumbnail link (useful for previews/lists).
+     * 
+     * @param string $fileId
+     * @param int $width Warning: anything > 200 may require auth cookies in some cases
+     * @return string
+     */
+    public function getThumbnailLink(string $fileId, int $width = 200): string
+    {
+        return "https://drive.google.com/thumbnail?sz=w{$width}&id=" . $fileId;
     }
 
     /**

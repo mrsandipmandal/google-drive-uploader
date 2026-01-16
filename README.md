@@ -210,8 +210,9 @@ Different file types require different HTML tags.
 return view('googleFileView', [
     'fileId' => $googleFile->id,
     'mimeType' => $googleFile->mimeType,
-    'embedLink' => $drive->getEmbedLink($googleFile->id), // For Images (<img>)
-    'previewLink' => $drive->getPreviewLink($googleFile->id) // For Video/PDF (<iframe>)
+    'embedLink' => $drive->getEmbedLink($googleFile->id), // For Full Images
+    'thumbnailLink' => $drive->getThumbnailLink($googleFile->id, 500), // For Smaller/Safer Images
+    'previewLink' => $drive->getPreviewLink($googleFile->id) // For Videos/PDFs
 ]);
 ```
 
@@ -220,7 +221,10 @@ return view('googleFileView', [
 ```blade
 <!-- If it is an IMAGE -->
 @if(str_contains($mimeType, 'image/'))
-    <img src="{{ $embedLink }}" alt="Image from Drive">
+    <!-- Try High-Res Embed, fallback to Thumbnail if blocked -->
+    <img src="{{ $embedLink }}" 
+         onerror="this.onerror=null;this.src='{{ $thumbnailLink }}';" 
+         alt="Image from Drive">
 
 <!-- If it is a VIDEO -->
 @elseif(str_contains($mimeType, 'video/'))
