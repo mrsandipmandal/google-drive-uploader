@@ -107,63 +107,88 @@ foreach ($uploadedFiles as $path => $file) {
 
 This package is framework-agnostic, but can be easily used in Laravel.
 
-**Controller Example:**
+## Laravel Integration
+
+This package handles the entire OAuth flow. Here is a complete production-ready implementation.
+
+### 1. Define Routes
+
+In `routes/web.php`:
+
+```php
+use App\Http\Controllers\DriveController;
+
+Route::post('/upload', [DriveController::class, 'upload'])->name('google.upload');
+Route::get('/google/callback', [DriveController::class, 'callback'])->name('google.callback');
+```
+
+**Note:** Ensure `http://localhost:8000/google/callback` (or your domain) is added to "Authorized redirect URIs" in your Google Cloud Console.
+
+### 2. The Controller
 
 ```php
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Open\GoogleDrive\GoogleDriveService;
+use Exception;
 
 class DriveController extends Controller
 {
+    private function getDriveService()
+    {
+        return new GoogleDriveService(
+            storage_path('app/google/credentials.json'),
+            storage_path('app/google/token.json')
+        );
+    }
+
     public function upload(Request $request)
     {
         $request->validate(['file' => 'required|file']);
 
-        $drive = new GoogleDriveService(
-            storage_path('app/google/credentials.json'),
-            storage_path('app/google/token.json')
-        );
+        try {
+            $drive = $this->getDriveService();
 
-        $uploadedFile = $request->file('file');
-        $googleFile = $drive->uploadFile(
-            $uploadedFile->getPathname(), 
-            'LaravelUploads',
-            true, // Make public
-            $uploadedFile->getClientOriginalName() // Use original name instead of temp name
-        );
-        
-        return response()->json([
-            'message' => 'Upload successful',
-            'url' => $googleFile->getWebViewLink(),
-            'embed_link' => $drive->getEmbedLink($googleFile->id)
-        ]);
+            $uploadedFile = $request->file('file');
+            
+            $googleFile = $drive->uploadFile(
+                $uploadedFile->getPathname(), 
+                'LaravelUploads',
+                true,
+                $uploadedFile->getClientOriginalName()
+            );
+            
+            return response()->json([
+                'status' => 'success',
+                'url' => $googleFile->getWebViewLink(),
+                'embed_link' => $drive->getEmbedLink($googleFile->id)
+            ]);
+
+        } catch (Exception $e) {
+            // detailed check for "Auth Required" message from library
+            if (str_contains($e->getMessage(), 'Google Drive Auth Required')) {
+                // Redirect user to Google Login
+                $authUrl = $this->getDriveService()->getAuthUrl(route('google.callback'));
+                return redirect($authUrl);
+            }
+            throw $e;
+        }
     }
 
-    public function uploadMultiple(Request $request)
+    public function callback(Request $request)
     {
-        $request->validate(['files.*' => 'required|file']);
-
-        $drive = new GoogleDriveService(
-            storage_path('app/google/credentials.json'),
-            storage_path('app/google/token.json')
-        );
-
-        $paths = [];
-        foreach ($request->file('files') as $file) {
-            // Use filename as key to preserve it (['name.jpg' => '/tmp/path'])
-            $paths[$file->getClientOriginalName()] = $file->getPathname();
+        $code = $request->input('code');
+        if (!$code) {
+             return response()->json(['error' => 'No code provided'], 400);
         }
 
-        $uploadedFiles = $drive->uploadFiles($paths, 'LaravelBatchUploads');
+        $drive = $this->getDriveService();
         
-        $links = [];
-        foreach ($uploadedFiles as $file) {
-            $links[] = $drive->getEmbedLink($file->id);
-        }
+        // This exchanges the code for a token and SAVES it to token.json automatically
+        $drive->authenticate($code, route('google.callback'));
 
-        return response()->json(['links' => $links]);
+        return redirect()->route('google.upload'); // Or wherever you want
     }
 }
 ```
