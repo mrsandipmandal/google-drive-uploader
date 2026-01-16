@@ -201,6 +201,41 @@ class DriveController extends Controller
 }
 ```
 
+## How to Display Files (Blade Example)
+
+Different file types require different HTML tags.
+
+**Controller:** Pass the `id` and `mimeType` to your view.
+```php
+return view('googleFileView', [
+    'fileId' => $googleFile->id,
+    'mimeType' => $googleFile->mimeType,
+    'embedLink' => $drive->getEmbedLink($googleFile->id), // For Images (<img>)
+    'previewLink' => $drive->getPreviewLink($googleFile->id) // For Video/PDF (<iframe>)
+]);
+```
+
+**View (`googleFileView.blade.php`):**
+
+```blade
+<!-- If it is an IMAGE -->
+@if(str_contains($mimeType, 'image/'))
+    <img src="{{ $embedLink }}" alt="Image from Drive">
+
+<!-- If it is a VIDEO -->
+@elseif(str_contains($mimeType, 'video/'))
+    <iframe src="{{ $previewLink }}" width="640" height="480"></iframe>
+
+<!-- If it is a PDF -->
+@elseif($mimeType == 'application/pdf')
+    <iframe src="{{ $previewLink }}" width="600" height="800"></iframe>
+
+<!-- Download Link for others -->
+@else
+    <a href="https://drive.google.com/uc?export=download&id={{ $fileId }}" class="btn btn-primary">Download File</a>
+@endif
+```
+
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/mrsandipmandal/google-drive-uploader/issues)

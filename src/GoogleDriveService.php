@@ -269,14 +269,26 @@ class GoogleDriveService
 
     /**
      * Get a direct embeddable link (e.g., for <img src>).
-     * Note: This link format is widely used for hosting images from Drive.
+     * Uses the reliable Google Host (lh3) for images.
      *
      * @param string $fileId
      * @return string
      */
     public function getEmbedLink(string $fileId): string
     {
-        return "https://drive.google.com/uc?export=view&id=" . $fileId;
+        return "https://lh3.googleusercontent.com/d/" . $fileId;
+    }
+
+    /**
+     * Get a preview link (e.g., for <iframe src>).
+     * Suitable for Videos and PDFs.
+     * 
+     * @param string $fileId
+     * @return string
+     */
+    public function getPreviewLink(string $fileId): string
+    {
+        return "https://drive.google.com/file/d/" . $fileId . "/preview";
     }
 
     /**

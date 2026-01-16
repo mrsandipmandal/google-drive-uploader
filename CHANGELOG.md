@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.8] - 2026-01-16
+
+### Changed
+- **Image Embedding**: Updated `getEmbedLink` to use the `lh3.googleusercontent.com` CDN domain. This is significantly more reliable for `<img>` tags than the previous `drive.google.com/uc` link, avoiding 403 errors and rate limits.
+- **Preview Helper**: Added `getPreviewLink($fileId)` method to generate the `.../preview` URL used for embedding Videos and PDFs in `<iframe>` tags.
+
 ## [1.0.7] - 2026-01-16
 
 ### Added
