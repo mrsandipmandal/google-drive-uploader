@@ -147,7 +147,7 @@ class GoogleDriveService
                 'mimeType' => $mimeType,
                 'uploadType' => 'multipart',
                 'supportsAllDrives' => true,
-                'fields' => 'id, name, parents, webViewLink, webContentLink, thumbnailLink'
+                'fields' => 'id, name, mimeType, parents, webViewLink, webContentLink, thumbnailLink'
             ]);
 
             if ($makePublic) {

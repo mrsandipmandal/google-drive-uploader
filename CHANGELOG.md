@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.9] - 2026-01-16
+
+### Fixed
+- **API Response**: Added `mimeType` to the requested fields in `uploadFile` and `uploadFiles`. This ensures the returned `DriveFile` object correctly populates `$file->mimeType`, fixing issues where the type was null in post-upload logic.
+
 ## [1.0.8] - 2026-01-16
 
 ### Changed
