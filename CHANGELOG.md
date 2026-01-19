@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.11] - 2026-01-19
+
+### Changed
+- **Package Name**: Renamed Composer package from `sandipmandal/google-drive-uploader` to `open/google-drive-uploader` to align with the new branding.
+- **Documentation**: Updated `README.md` with new installation instructions and badge links.
+
 ## [1.0.10] - 2026-01-16
 
 ### Added
