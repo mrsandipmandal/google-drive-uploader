@@ -1,8 +1,8 @@
 # Google Drive Uploader Library
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/sandipmandal/google-drive-uploader.svg?style=flat-square)](https://packagist.org/packages/sandipmandal/google-drive-uploader)
-[![Total Downloads](https://img.shields.io/packagist/dt/sandipmandal/google-drive-uploader.svg?style=flat-square)](https://packagist.org/packages/sandipmandal/google-drive-uploader)
-[![License](https://img.shields.io/packagist/l/sandipmandal/google-drive-uploader.svg?style=flat-square)](https://packagist.org/packages/sandipmandal/google-drive-uploader)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/open-php/google-drive-uploader.svg?style=flat-square)](https://packagist.org/packages/open-php/google-drive-uploader)
+[![Total Downloads](https://img.shields.io/packagist/dt/open-php/google-drive-uploader.svg?style=flat-square)](https://packagist.org/packages/open-php/google-drive-uploader)
+[![License](https://img.shields.io/packagist/l/open-php/google-drive-uploader.svg?style=flat-square)](https://packagist.org/packages/open-php/google-drive-uploader)
 
 A simple, robust PHP library for uploading files to Google Drive. It handles creating folders, setting public permissions, and most importantly, **automatic token refreshing and retries** (self-healing auth) to handle the dreaded 7-day token expiry for testing apps.
 
@@ -18,7 +18,7 @@ A simple, robust PHP library for uploading files to Google Drive. It handles cre
 Install via Composer:
 
 ```bash
-composer require sandipmandal/google-drive-uploader
+composer require open-php/google-drive-uploader
 ```
 
 ## Google Cloud Setup

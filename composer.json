@@ -1,5 +1,5 @@
 {
-    "name": "sandipmandal/google-drive-uploader",
+    "name": "open-php/google-drive-uploader",
     "description": "A robust, self-healing Google Drive Uploader for PHP. Features automatic token lifecycle management, smart folder handling, and reliable helpers for embedding images and videos.",
     "type": "library",
     "license": "MIT",
