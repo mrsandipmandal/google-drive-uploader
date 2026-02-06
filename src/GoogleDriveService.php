@@ -254,6 +254,41 @@ class GoogleDriveService
     }
 
     /**
+     * Delete a file permanently from Google Drive.
+     * 
+     * @param string $fileId The ID of the file to delete
+     * @return void
+     * @throws Exception If deletion fails
+     */
+    public function deleteFile(string $fileId): void
+    {
+        $this->callWithRetry(function () use ($fileId) {
+            $this->getService()->files->delete($fileId);
+        });
+    }
+
+    /**
+     * Rename a file in Google Drive.
+     * 
+     * @param string $fileId The ID of the file to rename
+     * @param string $newName The new name for the file
+     * @return Drive\DriveFile The updated file object
+     * @throws Exception If rename fails
+     */
+    public function renameFile(string $fileId, string $newName): Drive\DriveFile
+    {
+        return $this->callWithRetry(function () use ($fileId, $newName) {
+            $fileMetadata = new Drive\DriveFile([
+                'name' => $newName
+            ]);
+            
+            return $this->getService()->files->update($fileId, $fileMetadata, [
+                'fields' => 'id, name, parents, webViewLink, webContentLink'
+            ]);
+        });
+    }
+
+    /**
      * Make a file public (anyone with link can read).
      */
     public function setPublicPermissions(string $fileId): void

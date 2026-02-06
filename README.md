@@ -103,6 +103,37 @@ foreach ($uploadedFiles as $path => $file) {
 }
 ```
 
+### 5. Deleting a File
+
+You can permanently delete a file using its File ID:
+
+```php
+try {
+    $fileId = '12345abcde...';
+    $drive->deleteFile($fileId);
+    echo "File deleted successfully.";
+} catch (Exception $e) {
+    echo "Error deleting file: " . $e->getMessage();
+}
+```
+
+### 6. Renaming a File
+
+You can rename a file using its File ID:
+
+```php
+try {
+    $fileId = '12345abcde...';
+    $newName = 'My New Name.jpg';
+    
+    $updatedFile = $drive->renameFile($fileId, $newName);
+    
+    echo "File renamed to: " . $updatedFile->getName();
+} catch (Exception $e) {
+    echo "Error renaming file: " . $e->getMessage();
+}
+```
+
 ## Laravel Integration
 
 This package is framework-agnostic, but can be easily used in Laravel.
