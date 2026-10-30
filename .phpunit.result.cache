@@ -1,0 +1,1 @@
+{"version":2,"defects":[],"times":{"GoogleDriveServiceTest::testGetEmbedLinkReturnsViewUrl":0.006,"GoogleDriveServiceTest::testGetPreviewLinkReturnsPreviewUrl":0.001,"GoogleDriveServiceTest::testGetThumbnailLinkReturnsThumbnailUrl":0,"GoogleDriveServiceTest::testGetThumbnailLinkCustomWidth":0}}

@@ -10,6 +10,8 @@ namespace Open\GoogleDrive;
 use Google\Client;
 use Google\Service\Drive;
 use Google\Service\Exception as GoogleServiceException;
+use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Psr7\Request;
 use Exception;
 
 class GoogleDriveService
@@ -339,8 +341,39 @@ class GoogleDriveService
     }
 
     /**
-     * Execute a callback with retry logic for 401 errors.
+     * Download a file from Google Drive to a local path.
+     * Streams the file content using the file's webContentLink.
+     *
+     * @param string $fileId   The ID of the file to download
+     * @param string $destPath Local path where the file will be saved
+     * @return void
+     * @throws Exception If download fails
      */
+    public function downloadFile(string $fileId, string $destPath): void
+    {
+        $this->callWithRetry(function () use ($fileId, $destPath) {
+            $service = $this->getService();
+
+            $file = $service->files->get($fileId, [
+                'fields' => 'webContentLink, name, mimeType, size',
+                'supportsAllDrives' => true,
+            ]);
+
+            $downloadUrl = $file->getWebContentLink();
+            if (!$downloadUrl) {
+                throw new Exception("No download link available for file ID: {$fileId}");
+            }
+
+            $request = $service->getClient()->createAuthorizedHttpRequest(new Request('GET', $downloadUrl));
+            $httpClient = new HttpClient();
+            $response = $httpClient->send($request, ['sink' => $destPath]);
+
+            if ($response->getStatusCode() >= 400) {
+                throw new Exception("Download failed with HTTP {$response->getStatusCode()} for file ID: {$fileId}");
+            }
+            });
+    }
+
     private function callWithRetry(callable $callback)
     {
         try {

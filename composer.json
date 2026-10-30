@@ -27,7 +27,7 @@
         }
     ],
     "require": {
-        "php": ">=7.4",
+        "php": "^7.4 || ^8.0",
         "google/apiclient": "^2.15"
     },
     "autoload": {
@@ -36,5 +36,8 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "require-dev": {
+        "phpunit/phpunit": "^10"
+    }
 }
