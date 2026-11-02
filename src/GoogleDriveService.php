@@ -134,8 +134,11 @@ class GoogleDriveService
             $service = $this->getService();
             
             // Get or create parent folder
-            $folderId = $this->getOrCreateFolder($folderName);
+            // $folderId = $this->getOrCreateFolder($folderName); // Closed in favor of nested folder support
 
+            // Optimization: Support nested folder paths
+            $folderId = $this->getOrCreateFolderPath($folderName);
+            
             $fileMetadata = new Drive\DriveFile([
                 'name' => $fileName ?? basename($filePath),
                 'parents' => [$folderId]
