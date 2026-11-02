@@ -255,6 +255,33 @@ class GoogleDriveService
         });
     }
 
+    public function getOrCreateFolderPath(string $folderPath): string
+    {
+        $parentId = null;
+
+        $folders = explode('/', trim($folderPath, '/'));
+
+        foreach ($folders as $folderName) {
+
+            $folderName = trim($folderName);
+
+            if ($folderName === '') {
+                continue;
+            }
+
+            $parentId = $this->getOrCreateFolder(
+                $folderName,
+                $parentId
+            );
+        }
+
+        if (!$parentId) {
+            throw new Exception("Invalid Google Drive folder path.");
+        }
+
+        return $parentId;
+    }
+
     /**
      * Delete a file permanently from Google Drive.
      * 
