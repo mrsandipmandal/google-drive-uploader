@@ -3,14 +3,16 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/open-php/google-drive-uploader.svg?style=flat-square)](https://packagist.org/packages/open-php/google-drive-uploader)
 [![Total Downloads](https://img.shields.io/packagist/dt/open-php/google-drive-uploader.svg?style=flat-square)](https://packagist.org/packages/open-php/google-drive-uploader)
 [![License](https://img.shields.io/packagist/l/open-php/google-drive-uploader.svg?style=flat-square)](https://packagist.org/packages/open-php/google-drive-uploader)
+[![CI](https://github.com/mrsandipmandal/google-drive-uploader/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/mrsandipmandal/google-drive-uploader/actions/workflows/ci.yml)
 
 A simple, robust PHP library for uploading files to Google Drive. It handles creating folders, setting public permissions, and most importantly, **automatic token refreshing and retries** (self-healing auth) to handle the dreaded 7-day token expiry for testing apps.
 
 ## Features
 
-- 📂 **Auto-create folders**: Automatically creates folders if they don't exist.
+- 📂 **Auto-create folders**: Automatically creates folders, including nested paths such as `Uploads/Photos`.
 - 🔄 **Self-Healing Auth**: Automatically catches 401 errors, refreshes tokens using your refresh token, and retries the upload.
 - 🌍 **Public Links**: Option to automatically make uploaded files public and get a web-viewable link.
+- ⬇️ **Download files**: Download Drive files directly to a local path.
 - 📦 **PSR-4 Compliant**: Namespace `Open\GoogleDrive`, ready for any Composer project.
 
 ## Installation
@@ -32,7 +34,9 @@ To use this library, you need credentials from the Google Cloud Console.
 5.  Application Type: **Web Application**.
 6.  Redirect URI: `http://localhost/callback.php` (or your production URL).
 7.  Download the JSON and save it as `credentials.json`.
-8.  **Important**: If your app is in "Testing" mode, tokens expire in 7 days. Ideally, set Publishing Status to **"In Production"** to avoid this, but this library handles auto-refresh if valid refresh tokens are present.
+8. **Important**: While your OAuth consent screen is in "Testing" mode, refresh tokens for external users can expire after 7 days. Moving the app to production may change this behavior, subject to Google's OAuth policies. The library can refresh access tokens only while Google accepts the stored refresh token.
+
+Keep `credentials.json` and `token.json` private. Do not commit them to source control or expose them through a public web directory; restrict filesystem access to the application account.
 
 ## Usage
 
@@ -69,15 +73,13 @@ if (!file_exists($tokenPath)) {
 ```php
 try {
     $localFilePath = '/path/to/image.jpg';
-    $folderName = 'My Uploads';
+    // Slash-separated paths create nested folders when needed.
+    $folderName = 'My Uploads/Photos';
     
     // Upload file
     $fileId = $drive->uploadFile($localFilePath, $folderName);
     
-    // Get public accessible link (if enabled in service)
-    // Note: ensure uploadFile returns the file object or ID based on your specific version needs
-    // The current implementation returns a Google_Service_Drive_DriveFile object
-    
+    // uploadFile returns a Google Drive file object.
     echo "File Uploaded! ID: " . $fileId->id . "\n";
     echo "Web View Link: " . $fileId->getWebViewLink() . "\n";
     
@@ -134,10 +136,24 @@ try {
 }
 ```
 
+### 7. Downloading a File
+
+Download a Drive file to a local path. The destination directory must already exist and be writable by PHP.
+
+```php
+try {
+    $drive->downloadFile('GOOGLE_DRIVE_FILE_ID', '/path/to/downloads/report.pdf');
+    echo "File downloaded.";
+} catch (Exception $e) {
+    echo "Error downloading file: " . $e->getMessage();
+}
+```
+
+`downloadFile` requires Google Drive to provide a download link for the file.
+
 ## Laravel Integration
 
-This package is framework-agnostic, but can be easily used in Laravel.
-This package handles the entire OAuth flow. Here is a complete production-ready implementation.
+This package is framework-agnostic, but can be used in Laravel. The example below shows one way to connect the library's OAuth flow to Laravel routes.
 
 ### 1. Define Routes
 
@@ -279,6 +295,12 @@ return view('googleFileView', [
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) file for details.
+
+## Disclaimer
+
+This independent open-source project is not affiliated with, endorsed by, or sponsored by Google LLC. Google Drive and Google are trademarks of Google LLC.
+
+You are responsible for securing OAuth credentials and tokens, configuring Google Cloud permissions, and complying with Google's applicable terms and policies. Do not expose credentials or tokens in public repositories, client-side code, or public directories.
 
 ## Author
 

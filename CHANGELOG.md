@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.15] - 2026-11-02
+
+### Changed
+- `uploadFile` now supports slash-separated nested folder paths and creates missing folders along the path.
+- Updated README usage, CI status, and credential-safety guidance.
+
 ## [1.0.14] - 2026-11-02
 
 ### Added
