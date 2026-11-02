@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.14] - 2026-11-02
+
+### Added
+- Added `downloadFile` and `getOrCreateFolderPath` methods.
+
+### Changed
+- Expanded the supported PHP version range to PHP 7.4 and PHP 8.x.
+
 ## [1.0.12]
 
 ### Changed
